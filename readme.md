@@ -18,7 +18,7 @@
 
 下载代码，用过，会用一点python编程的可以直接从 [GitHub](https://github.com/Blacklyy/autoMedic) 获取源代码。
 
-小笨蛋的可以从 GitHub上 [Release](https://github.com/Blacklyy/autoMedic/releases/download/publish/autoMedic.zip) 或者 [百度云](https://pan.baidu.com/s/1534nzeWCM2g9aeDzloYVtw?pwd=uq6k) 下载。
+小笨蛋的可以从 GitHub上 [Release](https://github.com/Blacklyy/autoMedic/releases/download/v0.2/autoMedicV0.2.zip) 或者 [百度云](https://pan.baidu.com/s/1xfHP60xEowZs50yNdAF89A?pwd=qaca) 下载。
 
 下载得到压缩包解压后你应该可以得到三个文件 main.py，msedgedriver.exe、comments.txt和文件夹selenium。
 
