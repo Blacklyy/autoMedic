@@ -1,13 +1,13 @@
 import random
 import time
+
+from PIL import Image
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.edge.options import Options
 from selenium.webdriver.edge.service import Service
-#简化对edge浏览器的二进制驱动程序的管理
+# 简化对edge浏览器的二进制驱动程序的管理
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
-
-from PIL import Image
 
 options = Options()
 options.use_chromium = True
