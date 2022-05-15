@@ -6,7 +6,8 @@ from selenium.webdriver.common.by import By
 browser = webdriver.Edge()
 
 # 关键词 可自行添加修改
-keywords = ['不要', '不用']
+blackWords = ['不要', '不用', '饭圈', '恶心', '请假']
+whiteList = ['救', '治疗', '9', '寄', '奶', '助']
 # 以下不用动
 # 珈乐超话
 url = 'https://weibo.com/p/1008088498695f86c2878554b54c91018353d4/super_index'
@@ -15,7 +16,7 @@ times = 0
 
 
 def initTreatment():
-	preword = "提醒求奶不要加超话的tag "
+	preword = "from 豆瓣 小笨蛋也用得来的自动医疗兵程序 "
 	for n in open("comments.txt", 'r', encoding='utf-8').readlines():
 		treatment.append(preword + n)
 	print("话术加载完成")
@@ -38,7 +39,14 @@ def skip(text):
 	if len(text) > 120:
 		# 认为是正常发帖
 		return True
-	for word in keywords:
+	for word in blackWords:
+		if text.find(word) != -1:
+			return True
+	return False
+
+
+def shouldHelp(text):
+	for word in whiteList:
 		if text.find(word) != -1:
 			return True
 	return False
@@ -60,14 +68,7 @@ def work():
 	print("comments length:" + str(len(comments)))
 	for i in range(len(comments)):
 		print("===========================\n " + comments[i].text)
-		if skip(comments[i].text):
-			# 可以点个赞
-			# 不行 点赞也会寄 不点了
-			# browser.execute_script("arguments[0].scrollIntoView();", comments[i])
-			# print("点赞 " + comments[i].text.split('\n')[2])
-			# comments[i].find_elements("class name", "pos")[3].click()
-			# 防止频繁操作
-			# time.sleep(3)
+		if skip(comments[i].text) or not shouldHelp(comments[i].text):
 			continue
 		if comments[i].text.split("\n")[-2].find('评论') == 1:
 			# 优先评论暂无评论的发布
@@ -82,32 +83,42 @@ def work():
 	comment = comments[minP]
 	browser.execute_script("arguments[0].scrollIntoView();", comment)
 
-	# 点赞
-	comment.find_elements("class name", "pos")[3].click()
-	print("点赞 " + comment.text.split('\n')[2])
-	time.sleep(3)
-	# 评论
-	comment.find_elements("class name", "pos")[2].click()
-	time.sleep(3)
-	# 写入评论
-	comment.find_element(By.CSS_SELECTOR, "textarea.W_input").send_keys(getTreatment())
-	time.sleep(3)
-	# 提交评论
-	comment.find_element(By.CSS_SELECTOR, "a.W_btn_a").click()
-	print("评论 " + comment.text.split('\n')[2])
+	try:
+		# 点赞
+		comment.find_elements("class name", "pos")[3].click()
+		print("点赞 " + comment.text.split('\n')[2])
+		time.sleep(3)
+		# 评论
+		comment.find_elements("class name", "pos")[2].click()
+		time.sleep(3)
+		# 写入评论
+		tmp = getTreatment()
+		left = right = 0
+		while right < len(tmp):
+			# 模拟手打
+			right = min(len(tmp), right + random.randint(1, 3))
+			comment.find_element(By.CSS_SELECTOR, "textarea.W_input").send_keys(tmp[left:right])
+			left = right
+			time.sleep(random.randint(1, 3) / 5)
+		time.sleep(3)
+		# 提交评论
+		comment.find_element(By.CSS_SELECTOR, "a.W_btn_a").click()
+		print("评论 " + comment.text.split('\n')[2])
+	except Exception:
+		print("失败， 可能由于作者设置仅关注可评论")
+		work()
 
 
 def main():
 	initTreatment()
 	weibo_login()
-	# cookie_login()
 	global times
 	while True:
 		work()
 		times += 1
 		print("第{:d}次工作结束，开始睡眠".format(times))
-		# 按饭圈指导的说法说隔45s可以免cd，但实际测试的时候45s也会被拿下，暂时改为60s，还会被拿下的话只能自己增加时间了
-		time.sleep(60)
+		# 按饭圈指导的说法说隔45s可以免cd，但实际测试的时候45s也会被拿下（可能因为我帐号分数太低了），暂时改为50s，可以自行修改睡眠时间。
+		time.sleep(50)
 
 
 if __name__ == '__main__':
